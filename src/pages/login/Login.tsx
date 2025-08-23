@@ -4,7 +4,7 @@ import styled from 'styled-components';
 const Login: React.FC = () => {
   return (
     <LoginContainer>
-            dsadhsahdsajhd
+            login page
     </LoginContainer>
   );
 };
