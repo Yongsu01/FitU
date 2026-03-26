@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import defaultImage from '../../../assets/images/default_profileImage.png';
 
@@ -13,21 +13,11 @@ interface FriendListProps {
   onFriendClick: (id: number, name: string) => void;
 }
 
-const FriendListItem: React.FC<{ friend: Friend; onFriendClick: (id: number, name: string) => void }> = ({ friend, onFriendClick }) => {
-  const [imgSrc, setImgSrc] = useState(friend.profileImage || defaultImage);
-  return (
-    <FriendItem onClick={() => onFriendClick(friend.id, friend.name)}>
-      <ProfileImage
-        src={imgSrc}
-        alt={friend.name}
-        onError={() => setImgSrc(defaultImage)}
-      />
-      <FriendName>{friend.name}</FriendName>
-    </FriendItem>
-  );
-};
-
 const FriendList: React.FC<FriendListProps> = ({ friends, onFriendClick }) => {
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    e.currentTarget.src = defaultImage;
+  };
+
   if (friends.length === 0) {
     return <EmptyMessage>친구가 없습니다.</EmptyMessage>;
   }
@@ -35,7 +25,14 @@ const FriendList: React.FC<FriendListProps> = ({ friends, onFriendClick }) => {
   return (
     <ListContainer>
       {friends.map((friend) => (
-        <FriendListItem key={friend.id} friend={friend} onFriendClick={onFriendClick} />
+        <FriendItem key={friend.id} onClick={() => onFriendClick(friend.id, friend.name)}>
+          <ProfileImage 
+            src={friend.profileImage || defaultImage} 
+            alt={friend.name}
+            onError={handleImageError}
+          />
+          <FriendName>{friend.name}</FriendName>
+        </FriendItem>
       ))}
     </ListContainer>
   );
