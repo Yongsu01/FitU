@@ -1,17 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import styled, { keyframes, css } from "styled-components";
-import axiosInstance from "../../apis/axiosInstance";
-
-const IS_DEV_MODE = process.env.REACT_APP_DEV_MODE === "true";
 
 const Login: React.FC = () => {
   const REST_API_KEY = process.env.REACT_APP_REST_API_KEY;
-  const navigate = useNavigate();
 
-  const REDIRECT_URI = "http://localhost:3000/login/oauth";
+  const REDIRECT_URI = "https://fit-u-wheat.vercel.app/login/oauth";
   const [showContent, setShowContent] = useState(false);
-  const [localEmail, setLocalEmail] = useState("");
   const link = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
 
   useEffect(() => {
@@ -24,22 +18,6 @@ const Login: React.FC = () => {
     window.location.href = link;
   };
 
-  const handleLocalLogin = async () => {
-    if (!localEmail.trim()) return;
-    try {
-      const response = await axiosInstance.post("/auth/login/local", {
-        email: localEmail,
-      });
-      const jwtToken = response.data.token;
-      const userid = response.data.userId;
-      sessionStorage.setItem("Authorization", jwtToken);
-      sessionStorage.setItem("userid", userid);
-      navigate("/home");
-    } catch (error) {
-      console.error("로컬 로그인 실패:", error);
-    }
-  };
-
   return (
     <Wrapper showContent={showContent}>
       <Logo showContent={showContent}>
@@ -50,21 +28,6 @@ const Login: React.FC = () => {
       {showContent && (
         <ButtonWrapper>
           <KakaoButton onClick={LoginHandler}>카카오로 시작하기</KakaoButton>
-          {IS_DEV_MODE && (
-            <DevLoginSection>
-              <DevDivider>DEV 로컬 로그인</DevDivider>
-              <DevInput
-                type="email"
-                placeholder="이메일 입력 (예: user1@test.com)"
-                value={localEmail}
-                onChange={(e) => setLocalEmail(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleLocalLogin()}
-              />
-              <DevLoginButton onClick={handleLocalLogin}>
-                로컬 로그인
-              </DevLoginButton>
-            </DevLoginSection>
-          )}
         </ButtonWrapper>
       )}
     </Wrapper>
@@ -131,8 +94,7 @@ const ButtonWrapper = styled.div`
   animation: fadeIn 1s ease forwards;
   width: 100%;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: center;
 
   @keyframes fadeIn {
     from {
@@ -155,48 +117,4 @@ const KakaoButton = styled.button`
   font-weight: bold;
   cursor: pointer;
   width: 80%;
-`;
-
-const DevLoginSection = styled.div`
-  width: 80%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  margin-top: 20px;
-`;
-
-const DevDivider = styled.div`
-  font-size: 13px;
-  color: #999;
-  width: 100%;
-  text-align: center;
-  border-top: 1px solid #ddd;
-  padding-top: 16px;
-`;
-
-const DevInput = styled.input`
-  width: 100%;
-  padding: 12px 14px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 14px;
-  box-sizing: border-box;
-
-  &:focus {
-    outline: none;
-    border-color: #007aff;
-  }
-`;
-
-const DevLoginButton = styled.button`
-  width: 100%;
-  background-color: #007aff;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 14px 24px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
 `;

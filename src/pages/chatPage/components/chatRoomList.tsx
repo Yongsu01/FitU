@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import defaultImage from '../../../assets/images/default_profileImage.png';
 
 export interface ChatRoom {
   id: number;
@@ -14,19 +13,6 @@ interface ChatRoomListProps {
   onRoomClick: (roomId: number) => void;
 }
 
-const ChatRoomItem: React.FC<{ room: ChatRoom; onRoomClick: (roomId: number) => void }> = ({ room, onRoomClick }) => {
-  const [imgSrc, setImgSrc] = useState(room.profileImage || defaultImage);
-  return (
-    <RoomItem onClick={() => onRoomClick(room.id)}>
-      <ProfileImage src={imgSrc} alt={room.name} onError={() => setImgSrc(defaultImage)} />
-      <RoomInfo>
-        <RoomName>{room.name}</RoomName>
-        <LastMessage>{room.lastMessage}</LastMessage>
-      </RoomInfo>
-    </RoomItem>
-  );
-};
-
 const ChatRoomList: React.FC<ChatRoomListProps> = ({ chatRooms, onRoomClick }) => {
   if (chatRooms.length === 0) {
     return <EmptyMessage>진행 중인 채팅이 없습니다.</EmptyMessage>;
@@ -35,7 +21,13 @@ const ChatRoomList: React.FC<ChatRoomListProps> = ({ chatRooms, onRoomClick }) =
   return (
     <ListContainer>
       {chatRooms.map((room) => (
-        <ChatRoomItem key={room.id} room={room} onRoomClick={onRoomClick} />
+        <RoomItem key={room.id} onClick={() => onRoomClick(room.id)}>
+          <ProfileImage src={room.profileImage} alt={room.name} />
+          <RoomInfo>
+            <RoomName>{room.name}</RoomName>
+            <LastMessage>{room.lastMessage}</LastMessage>
+          </RoomInfo>
+        </RoomItem>
       ))}
     </ListContainer>
   );

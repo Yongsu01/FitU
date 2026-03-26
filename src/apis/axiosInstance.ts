@@ -40,7 +40,7 @@ axiosInstance.interceptors.response.use(
           originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
           return axiosInstance(originalRequest);
         }
-        return Promise.reject(error);
+        return axiosInstance(originalRequest);
       } catch (refreshError) {
         console.error("재발급 실패",refreshError);
         return Promise.reject(refreshError);
